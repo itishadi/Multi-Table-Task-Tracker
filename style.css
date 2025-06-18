@@ -1,0 +1,159 @@
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #eef1f5;
+  margin: 0;
+  padding: 20px;
+  color: #2c3e50;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+  color: #2c3e50;
+}
+
+.task-table {
+  background: #ffffff;
+  padding: 20px;
+  margin-top: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #dcdcdc;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-header h2 {
+  margin: 0;
+  flex-grow: 1;
+  color: #34495e;
+}
+
+.input-section {
+  margin-top: 10px;
+}
+
+.task-table input,
+.task-table select {
+  padding: 8px;
+  margin: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #fdfdfd;
+}
+
+.task-table button {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+button.complete {
+  background-color: #3498db;
+  color: white;
+}
+
+button.delete {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.task-table .collapse-btn {
+  background: #7f8c8d;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.task-table .task-list-container {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.task-table table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 15px;
+  table-layout: fixed;
+}
+
+.task-table thead {
+  background-color: #f4f6f8;
+  border-bottom: 2px solid #ccc;
+}
+
+.task-table thead th {
+  position: sticky;
+  top: 0;
+  background: #f4f6f8;
+  font-weight: bold;
+  text-align: left;
+  z-index: 1;
+  color: #34495e;
+}
+
+.task-table th,
+.task-table td {
+  padding: 15px;
+  background-color: #ffffff;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  vertical-align: top;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  color: #2c3e50;
+}
+
+.task-table tbody tr {
+  display: table-row;
+  background-color: transparent;
+}
+
+.task-table tbody tr td {
+  border: 1px solid #e0e0e0;
+}
+
+.task-table tbody tr.completed td {
+  text-decoration: line-through;
+  color: #7f8c8d;
+  background-color: #f0f0f0;
+}
+
+.task-table tbody tr:hover td {
+  background-color: #eaf2f8;
+  transition: background-color 0.3s ease;
+}
+
+.task-table th:nth-child(1),
+.task-table td:nth-child(1) { width: 15%; }
+
+.task-table th:nth-child(2),
+.task-table td:nth-child(2) { width: 35%; }
+
+.task-table th:nth-child(3),
+.task-table td:nth-child(3) { width: 15%; }
+
+.task-table th:nth-child(4),
+.task-table td:nth-child(4) { width: 10%; }
+
+.task-table th:nth-child(5),
+.task-table td:nth-child(5) { width: 10%; }
+
+.task-table th:nth-child(6),
+.task-table td:nth-child(6) { width: 15%; }
