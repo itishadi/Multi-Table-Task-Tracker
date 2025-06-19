@@ -95,6 +95,41 @@ function addTask(tableId) {
   document.getElementById(`${tableId}_priority`).value = "Medium";
 }
 
+// function renderTasks(tableId) {
+//   const list = document.getElementById(`${tableId}_list`);
+//   list.innerHTML = "";
+
+//   const tasks = getTasks(tableId);
+
+//   tasks.forEach((t, index) => {
+//     const row = document.createElement("tr");
+//     row.className = t.completed ? "completed" : "";
+//     row.setAttribute("draggable", "true");
+//     row.setAttribute("data-index", index);
+
+// row.innerHTML = `
+//   <td data-label="Task">${t.task}</td>
+//   <td data-label="Description">${t.desc}</td>
+//   <td data-label="Due Date">${t.due ? t.due.split("T")[0] : ""}
+//     <br><small style="color: #555;">${t.due && t.due.includes("T") ? t.due.split("T")[1] : ""}</small>
+//   </td>
+//   <td data-label="Priority">${t.priority}</td>
+//   <td data-label="Status">${t.completed ? "✅" : "❌"}</td>
+//   <td data-label="Actions">
+//     <button class="complete" onclick="toggleTask('${tableId}', ${index})">
+//       ${t.completed ? "🔄 Reopen" : "✅ Complete"}
+//     </button>
+//     <button class="delete" onclick="deleteTask('${tableId}', ${index})">🗑️ Delete</button>
+//   </td>
+// `;
+
+
+
+//     list.appendChild(row);
+//   });
+
+//   enableDragAndDrop(tableId);
+// }
 function renderTasks(tableId) {
   const list = document.getElementById(`${tableId}_list`);
   list.innerHTML = "";
@@ -103,33 +138,46 @@ function renderTasks(tableId) {
 
   tasks.forEach((t, index) => {
     const row = document.createElement("tr");
-    row.className = t.completed ? "completed" : "";
+    row.className = `task-row ${t.completed ? "completed" : ""}`;
     row.setAttribute("draggable", "true");
     row.setAttribute("data-index", index);
 
-    row.innerHTML = `
-         <td>${t.task}</td>
-         <td>${t.desc}</td>
-         <td>${t.due ? t.due.split("T")[0] : ""}
-         <br>
-            <small style="color: #555;">${t.due && t.due.includes("T") ? t.due.split("T")[1] : ""}</small>
-         </td>
+    const cells = [
+      { label: "Task", content: t.task },
+      { label: "Description", content: t.desc },
+      {
+        label: "Due Date",
+        content: `${t.due ? t.due.split("T")[0] : ""}<br><small>${t.due?.split("T")[1] || ""}</small>`
+      },
+      { label: "Priority", content: t.priority },
+      { label: "Status", content: t.completed ? "✅" : "❌" },
+      {
+        label: "Actions",
+        content: `
+          <button class="complete" onclick="toggleTask('${tableId}', ${index})">
+            ${t.completed ? "🔄 Reopen" : "✅ Complete"}
+          </button>
+          <button class="delete" onclick="deleteTask('${tableId}', ${index})">
+            🗑️ Delete
+          </button>
+        `
+      }
+    ];
 
-         <td>${t.priority}</td>
-         <td>${t.completed ? "✅" : "❌"}</td>
-         <td>
-    <button class="complete" onclick="toggleTask('${tableId}', ${index})">
-      ${t.completed ? "Reopen" : "Complete"}
-    </button>
-    <button class="delete" onclick="deleteTask('${tableId}', ${index})"> Delete </button>
-  </td>
-`;
+    cells.forEach(cell => {
+      const td = document.createElement("td");
+      td.setAttribute("data-label", cell.label);
+      td.innerHTML = cell.content;
+      row.appendChild(td);
+    });
 
     list.appendChild(row);
   });
 
   enableDragAndDrop(tableId);
 }
+
+
 
 function toggleTask(tableId, index) {
   const tasks = getTasks(tableId);
@@ -286,3 +334,18 @@ window.addEventListener("DOMContentLoaded", () => {
     recreateTable(tableId);
   });
 });
+
+// Antag att du skapar en ny rad i tabellen som detta:
+const tr = document.createElement("tr");
+
+const headers = ["Date", "Task", "Priority", "Status", "Actions", "Notes"];
+
+headers.forEach((headerText, index) => {
+  const td = document.createElement("td");
+  td.setAttribute("data-label", headerText);
+  td.textContent = "..."; // Fyll med din faktiska data
+  tr.appendChild(td);
+});
+
+tbody.appendChild(tr);
+
