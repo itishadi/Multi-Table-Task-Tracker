@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Skapa konto / Logga in</title>
+</head>
+<body>
+  <h2>🔐 Skapa konto</h2>
+  <input type="email" id="regEmail" placeholder="E-post" />
+  <input type="password" id="regPassword" placeholder="Lösenord" />
+  <input type="password" id="regConfirm" placeholder="Bekräfta lösenord" />
+  <br><br>
+  <button onclick="register()">Skapa konto</button>
+
+  <h2>🔑 Logga in</h2>
+  <input type="email" id="loginEmail" placeholder="E-post" />
+  <input type="password" id="loginPassword" placeholder="Lösenord" />
+  <br><br>
+  <button onclick="login()">Logga in</button>
+
+  <script type="module">
+    import { auth } from './firebase.js';
+    import {
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      sendEmailVerification
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    window.register = async () => {
+      const email = document.getElementById('regEmail').value;
+      const password = document.getElementById('regPassword').value;
+      const confirm = document.getElementById('regConfirm').value;
+
+      if (password !== confirm) {
+        alert("Lösenorden matchar inte.");
+        return;
+      }
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await sendEmailVerification(userCredential.user);
+        alert("Konto skapat! Verifieringsmail har skickats. Kontrollera din inkorg.");
+      } catch (error) {
+        alert("Fel: " + error.message);
+      }
+    };
+
+    window.login = async () => {
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        if (!userCredential.user.emailVerified) {
+          alert("Du måste verifiera din e-post innan du kan logga in.");
+          return;
+        }
+        alert("Inloggad!");
+        window.location.href = "index.html";
+      } catch (error) {
+        alert("Fel: " + error.message);
+      }
+    };
+  </script>
+</body>
+</html>

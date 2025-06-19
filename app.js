@@ -19,7 +19,7 @@ function createNewTable() {
           <option value="Medium" selected>Medium</option>
           <option value="High">High</option>
         </select>
-        <button onclick="addTask('${tableId}')">Add Task</button>
+        <button class="add-task" onclick="addTask('${tableId}')">Add Task</button>
       </div>
       <div class="task-list-container">
         <table>
@@ -121,7 +121,7 @@ function renderTasks(tableId) {
     <button class="complete" onclick="toggleTask('${tableId}', ${index})">
       ${t.completed ? "Reopen" : "Complete"}
     </button>
-    <button class="delete" onclick="deleteTask('${tableId}', ${index})">Delete</button>
+    <button class="delete" onclick="deleteTask('${tableId}', ${index})"> Delete </button>
   </td>
 `;
 
@@ -139,11 +139,15 @@ function toggleTask(tableId, index) {
 }
 
 function deleteTask(tableId, index) {
+  const confirmDelete = confirm("Are you sure you want to delete this task?");
+  if (!confirmDelete) return;
+
   const tasks = getTasks(tableId);
   tasks.splice(index, 1);
   saveTasks(tableId, tasks);
   renderTasks(tableId);
 }
+
 
 function enableDragAndDrop(tableId) {
   const rows = document.querySelectorAll(`#${tableId}_list tr`);
@@ -202,7 +206,8 @@ function toggleCollapse(tableId) {
 
   listContainer.style.display = isHidden ? "block" : "none";
   inputSection.style.display = isHidden ? "block" : "none";
-  btn.textContent = isHidden ? "Collapse" : "Expand";
+  btn.textContent = isHidden ? "🔼 Collapse" : "🔽 Expand";
+
 }
 
 function recreateTable(tableId) {
@@ -212,7 +217,8 @@ function recreateTable(tableId) {
     <div class="task-table" id="${tableId}_container">
       <div class="table-header">
         <h2 contenteditable="true">${getTableTitle(tableId) || "Restored Task Table"}</h2>
-        <button class="collapse-btn" onclick="toggleCollapse('${tableId}')">Collapse</button>
+        <button class="collapse-btn" onclick="toggleCollapse('${tableId}')">🔼 Collapse</button>
+        <button class="delete-table-btn" onclick="deleteTable('${tableId}')">🗑️ Delete Table</button>
       </div>
       <div class="input-section">
         <input type="text" placeholder="Task" id="${tableId}_task" />
@@ -251,6 +257,27 @@ function recreateTable(tableId) {
     saveTableTitle(tableId, titleElement.innerText);
   });
 }
+function deleteTable(tableId) {
+  if (!confirm("Är du säker på att du vill ta bort denna tabell?")) return;
+
+  // Remove from DOM
+  const container = document.getElementById(`${tableId}_container`);
+  if (container) container.remove();
+
+  // Remove from localStorage
+  localStorage.removeItem(tableId);
+
+  // Remove from tableIds list
+  const tableIds = JSON.parse(localStorage.getItem("tableIds")) || [];
+  const updatedIds = tableIds.filter(id => id !== tableId);
+  localStorage.setItem("tableIds", JSON.stringify(updatedIds));
+
+  // Remove title
+  const titles = JSON.parse(localStorage.getItem("tableTitles")) || {};
+  delete titles[tableId];
+  localStorage.setItem("tableTitles", JSON.stringify(titles));
+}
+
 
 window.addEventListener("DOMContentLoaded", () => {
   const tableIds = JSON.parse(localStorage.getItem("tableIds")) || [];

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Logga in</title>
+</head>
+<body>
+  <h2>🔑 Logga in</h2>
+  <input type="email" id="loginEmail" placeholder="E-post" />
+  <input type="password" id="loginPassword" placeholder="Lösenord" />
+  <br><br>
+  <button onclick="login()">Logga in</button>
+
+  <p>Har du inget konto? <a href="register.html">Skapa konto</a></p>
+
+  <script type="module">
+    import { auth } from './firebase.js';
+    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    window.login = async () => {
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        if (!userCredential.user.emailVerified) {
+          alert("Du måste verifiera din e-post innan du kan logga in.");
+          return;
+        }
+        // alert("Inloggad!");
+        window.location.href = "index.html";
+      } catch (error) {
+        alert("Fel: " + error.message);
+      }
+    };
+  </script>
+</body>
+</html>
