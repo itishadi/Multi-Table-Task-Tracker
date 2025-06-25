@@ -1,18 +1,21 @@
+
+
 <!DOCTYPE html>
 <html lang="sv">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Logga in</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <h2>🔑 Logga in</h2>
-  <input type="email" id="loginEmail" placeholder="E-post" />
-  <input type="password" id="loginPassword" placeholder="Lösenord" />
-  <br><br>
-  <button onclick="login()">Logga in</button>
-
-  <p>Har du inget konto? <a href="register.html">Skapa konto</a></p>
+<body class="login">
+  <div class="login-container">
+    <h2>🔐 Logga in</h2>
+    <input type="email" id="loginEmail" placeholder="E-post" />
+    <input type="password" id="loginPassword" placeholder="Lösenord" />
+    <button onclick="login()">Logga in</button>
+    <p>Har du inget konto? <a href="register.html">Skapa konto</a></p>
+  </div>
 
   <script type="module">
     import { auth } from './firebase.js';
@@ -28,7 +31,6 @@
           alert("Du måste verifiera din e-post innan du kan logga in.");
           return;
         }
-        // alert("Inloggad!");
         window.location.href = "index.html";
       } catch (error) {
         alert("Fel: " + error.message);

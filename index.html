@@ -36,26 +36,26 @@
       signOut
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-   document.getElementById("deleteAccountBtn").addEventListener("click", async () => {
-  const user = auth.currentUser;
+//    document.getElementById("deleteAccountBtn").addEventListener("click", async () => {
+//   const user = auth.currentUser;
 
-  const email = prompt("Confirm your email:");
-  if (!email) return; // User cancelled email prompt
+//   const email = prompt("Confirm your email:");
+//   if (!email) return; // User cancelled email prompt
 
-  const password = prompt("Confirm your password:");
-  if (!password) return; // User cancelled password prompt
+//   const password = prompt("Confirm your password:");
+//   if (!password) return; // User cancelled password prompt
 
-  const credential = EmailAuthProvider.credential(email, password);
+//   const credential = EmailAuthProvider.credential(email, password);
 
-  try {
-    await reauthenticateWithCredential(user, credential);
-    await deleteUser(user);
-    alert("Your account has been deleted.");
-    window.location.href = "register.html";
-  } catch (error) {
-    alert("Error: " + error.message);
-  }
-});
+//   try {
+//     await reauthenticateWithCredential(user, credential);
+//     await deleteUser(user);
+//     alert("Your account has been deleted.");
+//     window.location.href = "register.html";
+//   } catch (error) {
+//     alert("Error: " + error.message);
+//   }
+// });
 
 
     document.getElementById("logoutBtn").addEventListener("click", () => {
@@ -82,7 +82,8 @@
     });
   </script>
 
-  <script src="app.js"></script>
-  <script type="module" src="firebase.js"></script>
+<script type="module" src="firebase.js"></script>
+<script type="module" src="app.js"></script>
+
 </body>
 </html>

@@ -189,9 +189,9 @@ button.delete-table-btn {
 }
 
 .task-table tbody tr.completed td {
-  text-decoration: line-through;
-  color: #7f8c8d;
-  background-color: #f0f0f0;
+  border: 2px solid #4CAF50;
+  box-shadow: 0 0 10px #4CAF50;
+  animation: fadeHighlight 2s ease-out;
 }
 
 .task-table tbody tr:hover td {
@@ -218,7 +218,7 @@ button.delete-table-btn {
 .task-table th:nth-child(6),
 .task-table td:nth-child(6) { width: 15%; }
 
-/* Responsive Design */
+
 @media screen and (max-width: 768px) {
   .task-table table,
   .task-table thead,
@@ -268,4 +268,112 @@ button.delete-table-btn {
     font-size: 14px;
     white-space: nowrap;
   }
+}
+ /* fucus on table when I add a new one */
+ .task-table.highlight {
+  border: 2px solid #4CAF50;
+  box-shadow: 0 0 10px #4CAF50;
+  animation: fadeHighlight 2s ease-out;
+}
+
+@keyframes fadeHighlight {
+  0% { background-color: #e6ffe6; }
+  100% { background-color: transparent; }
+}
+
+/* komplete color */
+.task-row input,
+.task-row select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px 6px;
+  font-size: 14px;
+  font-family: inherit;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+}
+.task-row input,
+.task-row select {
+  border: none;
+  background: transparent;
+  border-bottom: 1px solid #ccc;
+}
+/* login */
+
+/* Grundläggande reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Bakgrund och centrering */
+.login {
+  background: linear-gradient(135deg, #4e54c8, #8f94fb);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Inloggningsruta */
+.login-container {
+  background-color: #ffffff;
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* Rubrik */
+.login-container h2 {
+  margin-bottom: 24px;
+  color: #333333;
+}
+
+/* Inmatningsfält */
+.login-container input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+/* Knapp */
+.login-container button {
+  width: 100%;
+  padding: 12px;
+  background-color: #4e54c8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-container button:hover {
+  background-color: #3b40a4;
+}
+
+/* Länk och text */
+.login-container p {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.login-container a {
+  color: #4e54c8;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.login-container a:hover {
+  text-decoration: underline;
 }
