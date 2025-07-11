@@ -4,43 +4,32 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Skapa konto</title>
+  <link rel="stylesheet" href="style.css" />
+  <link src="https://cdn.emailjs.com/dist/email.min.js"><link/>
+  
 </head>
-<body>
-  <h2>📝 Skapa konto</h2>
-  <input type="email" id="regEmail" placeholder="E-post" />
-  <input type="password" id="regPassword" placeholder="Lösenord" />
-  <input type="password" id="regConfirm" placeholder="Bekräfta lösenord" />
-  <br><br>
-  <button onclick="register()">Skapa konto</button>
+<body class="register">
+  <div class="register-container">
+    <h2>📝 Skapa konto</h2>
+    <input type="email" id="regEmail" placeholder="E-post" />
+    <input type="password" id="regPassword" placeholder="Lösenord" />
+    <input type="password" id="regConfirm" placeholder="Bekräfta lösenord" />
+    <br><br>
+    <button onclick="register()">Skapa konto</button>
+    <p>Har du redan ett konto? <a href="login.html">Logga in här</a></p>
+  </div>
+ 
+<script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+</script>
+<script type="text/javascript">
+   (function(){
+      emailjs.init({
+        publicKey: "aUPmcHFyvhrqNczD9",
+      });
+   })();
+</script>
 
-  <p>Har du redan ett konto? <a href="login.html">Logga in här</a></p>
-
-  <script type="module">
-    import { auth } from './firebase.js';
-    import {
-      createUserWithEmailAndPassword,
-      sendEmailVerification
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-    window.register = async () => {
-      const email = document.getElementById('regEmail').value;
-      const password = document.getElementById('regPassword').value;
-      const confirm = document.getElementById('regConfirm').value;
-
-      if (password !== confirm) {
-        alert("Lösenorden matchar inte.");
-        return;
-      }
-
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        await sendEmailVerification(userCredential.user);
-        alert("Konto skapat! Verifieringsmail har skickats. Kontrollera din inkorg.");
-        window.location.href = "login.html";
-      } catch (error) {
-        alert("Fel: " + error.message);
-      }
-    };
-  </script>
+  <script type="module" src="register.js"></script>
 </body>
 </html>

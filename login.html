@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="sv">
 <head>
@@ -16,26 +14,17 @@
     <button onclick="login()">Logga in</button>
     <p>Har du inget konto? <a href="register.html">Skapa konto</a></p>
   </div>
+  <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+</script>
+<script type="text/javascript">
+   (function(){
+      emailjs.init({
+        publicKey: "aUPmcHFyvhrqNczD9",
+      });
+   })();
+</script>
 
-  <script type="module">
-    import { auth } from './firebase.js';
-    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-    window.login = async () => {
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
-
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        if (!userCredential.user.emailVerified) {
-          alert("Du måste verifiera din e-post innan du kan logga in.");
-          return;
-        }
-        window.location.href = "index.html";
-      } catch (error) {
-        alert("Fel: " + error.message);
-      }
-    };
-  </script>
+  <script type="module" src="login.js"></script>
 </body>
 </html>

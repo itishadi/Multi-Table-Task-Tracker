@@ -6,19 +6,38 @@ import {
   collection,
   getDocs,
   updateDoc,
-  getDoc
+  getDoc,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+ import {
+      deleteUser,
+      reauthenticateWithCredential,
+      EmailAuthProvider,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 // Kontrollera inloggning
 window.addEventListener("DOMContentLoaded", () => {
-  onAuthStateChanged(auth, (user) => {
-    if (user && user.emailVerified) {
-      loadTablesFromFirestore();
-    } else {
-      window.location.href = "login.html";
-    }
-  });
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  const docRef = doc(db, "verifications", user.uid);
+  const docSnap = await getDoc(docRef);
+
+  if (!docSnap.exists() || !docSnap.data().verified) {
+    alert("Du måste verifiera ditt konto.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  // User is verified
+  loadTablesFromFirestore();
+});
+
 });
 
 // Skapa ny tabell
@@ -53,8 +72,6 @@ window.createNewTable = async function () {
   }, 100);
 };
 
-
-// Ladda tabeller
 async function loadTablesFromFirestore() {
   const user = auth.currentUser;
   if (!user) return;
@@ -65,19 +82,21 @@ async function loadTablesFromFirestore() {
   snapshot.forEach(docSnap => {
     const tableId = docSnap.id;
     const data = docSnap.data();
-    renderTable(tableId, data.title);
+    renderTable(tableId, data.title, data.collapsed || false);
   });
 }
 
-// Visa tabell i gränssnittet
-function renderTable(tableId, title) {
+function renderTable(tableId, title, collapsed = false) {
   const container = document.getElementById("tablesContainer");
 
   const tableHTML = `
     <div class="task-table" id="${tableId}_container">
       <div class="table-header">
         <h2 contenteditable="true" id="${tableId}_title">${title}</h2>
-        <button class="collapse-btn" onclick="toggleCollapse('${tableId}')">🔼 Collapse</button>
+        <button class="collapse-btn" onclick="toggleCollapse('${tableId}')">
+          ${collapsed ? "🔽 Expand" : "🔼 Collapse"}
+          <button class="zoom-btn" onclick="toggleZoom('${tableId}')">🔍 Zoom</button>
+        </button>
         <button class="delete-table-btn" onclick="deleteTable('${tableId}')">🗑️ Delete Table</button>
       </div>
       <div class="input-section">
@@ -91,7 +110,7 @@ function renderTable(tableId, title) {
         </select>
         <button onclick="addTask('${tableId}')">Add Task</button>
       </div>
-      <div class="task-list-container">
+      <div class="task-list-container" style="display: ${collapsed ? "none" : "block"};">
         <table>
           <thead>
             <tr>
@@ -125,6 +144,22 @@ function renderTable(tableId, title) {
     }, { merge: true });
   });
 }
+// Toggle zoom in/out
+window.toggleZoom = function (tableId) {
+  const table = document.getElementById(`${tableId}_container`);
+  const zoomBtn = table.querySelector(".zoom-btn");
+  const isZoomed = table.classList.contains("zoomed");
+
+  if (!isZoomed) {
+    table.classList.add("zoomed");
+    document.body.classList.add("zoom-active");
+   zoomBtn.textContent = "🔎 Zoom out";
+  } else {
+    table.classList.remove("zoomed");
+    document.body.classList.remove("zoom-active");
+    zoomBtn.textContent = "🔍 Zoom in";
+  }
+};
 
 // Radera tabell
 window.deleteTable = async function (tableId) {
@@ -214,20 +249,38 @@ window.renderTasks = async function (tableId) {
     row.dataset.taskId = t.id;
     row.dataset.tableId = tableId;
 
-    row.innerHTML = `
-      <td>${t.task}</td>
-      <td>${t.description}</td>
-      <td>${t.dueDate ? t.dueDate.split("T")[0] : ""}<br><small>${t.dueDate?.split("T")[1] || ""}</small></td>
-      <td>${t.priority}</td>
-      <td>${t.completed ? "✅" : "❌"}</td>
-      <td>
-        <button onclick="toggleTask('${tableId}', '${t.id}', ${!t.completed})">
-          ${t.completed ? "🔄 Reopen" : "✅ Complete"}
-        </button>
-        <button onclick="deleteTask('${tableId}', '${t.id}')">🗑️ Delete</button>
-        <button onclick="startEditTask('${tableId}', '${t.id}')">✏️ Edit</button>
-      </td>
-    `;
+    // row.innerHTML = `
+    //   <td>${t.task}</td>
+    //   <td>${t.description}</td>
+    //   <td>${t.dueDate ? t.dueDate.split("T")[0] : ""}<br><small>${t.dueDate?.split("T")[1] || ""}</small></td>
+    //   <td>${t.priority}</td>
+    //   <td>${t.completed ? "✅" : "❌"}</td>
+    //   <td>
+    //     <button onclick="toggleTask('${tableId}', '${t.id}', ${!t.completed})">
+    //       ${t.completed ? "🔄 Reopen" : "✅ Complete"}
+    //     </button>
+    //     <button onclick="deleteTask('${tableId}', '${t.id}')">🗑️ Delete</button>
+    //     <button onclick="startEditTask('${tableId}', '${t.id}')">✏️ Edit</button>
+    //   </td>
+    // `;
+row.innerHTML = `
+  <td><strong>${t.task}</strong></td>
+  <td>${t.description}</td>
+  <td>${t.dueDate ? t.dueDate.split("T")[0] : ""}<br><small>${t.dueDate?.split("T")[1] || ""}</small></td>
+  <td>${t.priority}</td>
+  <td>${t.completed ? "✅" : "❌"}</td>
+  <td>
+    <div class="task-buttons">
+      <button onclick="toggleTask('${tableId}', '${t.id}', ${!t.completed})">
+        ${t.completed ? "🔄 Reopen" : "✅ Complete"}
+      </button>
+      <button onclick="deleteTask('${tableId}', '${t.id}')">🗑️ Delete</button>
+      <button onclick="startEditTask('${tableId}', '${t.id}')">✏️ Edit</button>
+    </div>
+  </td>
+`;
+
+
 
     list.appendChild(row);
   });
@@ -314,16 +367,29 @@ window.deleteTask = async function (tableId, taskId) {
 };
 
 // Fäll ihop/expandera tabell
-window.toggleCollapse = function (tableId) {
+window.toggleCollapse = async function (tableId) {
   const container = document.querySelector(`#${tableId}_container .task-list-container`);
   const button = document.querySelector(`#${tableId}_container .collapse-btn`);
+  const user = auth.currentUser;
 
-  if (!container || !button) return;
+  if (!container || !button || !user) return;
 
   const isHidden = container.style.display === "none";
-  container.style.display = isHidden ? "block" : "none";
-  button.textContent = isHidden ? "🔼 Collapse" : "🔽 Expand";
+  const newDisplay = isHidden ? "block" : "none";
+  const newButtonText = isHidden ? "🔼 Collapse" : "🔽 Expand";
+
+  container.style.display = newDisplay;
+  button.textContent = newButtonText;
+
+  const tableRef = doc(db, "users", user.uid, "tables", tableId);
+  try {
+    await updateDoc(tableRef, { collapsed: !isHidden });
+  } catch (error) {
+    console.error("Failed to update collapse state in Firebase:", error);
+  }
 };
+
+
 
 //
 function enableDragAndDrop(tableId) {
@@ -463,3 +529,59 @@ async function handleDrop(e) {
 
 
 
+
+/////////////////////////////
+
+
+ 
+    document.getElementById("deleteAccountBtn").addEventListener("click", async () => {
+      const user = auth.currentUser;
+
+      const email = prompt("Bekräfta din e-post:");
+      if (!email) return;
+
+      const password = prompt("Bekräfta ditt lösenord:");
+      if (!password) return;
+
+      const credential = EmailAuthProvider.credential(email, password);
+
+      try {
+        await reauthenticateWithCredential(user, credential);
+        await deleteUser(user);
+        alert("Ditt konto har raderats.");
+        window.location.href = "register.html";
+      } catch (error) {
+        alert("Fel: " + error.message);
+      }
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      signOut(auth).then(() => {
+        window.location.href = "login.html";
+      });
+    });
+
+    
+    document.getElementById("userMenuBtn").addEventListener("click", () => {
+      const dropdown = document.getElementById("userDropdown");
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    });
+
+    window.addEventListener("click", (e) => {
+      if (!e.target.closest(".dropdown")) {
+        document.getElementById("userDropdown").style.display = "none";
+      }
+    });
+
+
+    document.getElementById("darkModeToggle").addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+  localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
+});
+
+// Load saved mode on page load
+window.addEventListener("DOMContentLoaded", () => {
+  if (localStorage.getItem("darkMode") === "true") {
+    document.body.classList.add("dark-mode");
+  }
+});

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -7,83 +7,26 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
   <div class="container">
     <h1>📝 Multi-Table Task Tracker</h1>
-
+    <div class="project-bar">
+      <button onclick="createNewProject()">➕ Skapa nytt projekt</button>
+       <select id="projectSelector" onchange="switchProject(this.value)"></select>
+    </div>
     <div class="top-bar">
       <button onclick="createNewTable()">➕ Add New Task Table</button>
-
       <div class="dropdown">
-        <button id="userMenuBtn">👤 Account ▾</button>
+        <button id="userMenuBtn">👤 Konto ▾</button>
         <div id="userDropdown" class="dropdown-content">
-          <button id="logoutBtn">Log Out</button>
-          <button id="deleteAccountBtn">Delete Account</button>
+          <button id="darkModeToggle">🌓 Dark Mode</button>
+          <button id="logoutBtn">Logga ut</button>
+          <button id="deleteAccountBtn">Radera konto</button>
         </div>
       </div>
     </div>
-
     <div id="tablesContainer"></div>
   </div>
-
-  <script type="module">
-    import { auth } from './firebase.js';
-    import {
-      deleteUser,
-      reauthenticateWithCredential,
-      EmailAuthProvider,
-      onAuthStateChanged,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-//    document.getElementById("deleteAccountBtn").addEventListener("click", async () => {
-//   const user = auth.currentUser;
-
-//   const email = prompt("Confirm your email:");
-//   if (!email) return; // User cancelled email prompt
-
-//   const password = prompt("Confirm your password:");
-//   if (!password) return; // User cancelled password prompt
-
-//   const credential = EmailAuthProvider.credential(email, password);
-
-//   try {
-//     await reauthenticateWithCredential(user, credential);
-//     await deleteUser(user);
-//     alert("Your account has been deleted.");
-//     window.location.href = "register.html";
-//   } catch (error) {
-//     alert("Error: " + error.message);
-//   }
-// });
-
-
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      signOut(auth).then(() => {
-        window.location.href = "login.html";
-      });
-    });
-
-    onAuthStateChanged(auth, (user) => {
-      if (!user || !user.emailVerified) {
-        window.location.href = "login.html";
-      }
-    });
-
-    document.getElementById("userMenuBtn").addEventListener("click", () => {
-      const dropdown = document.getElementById("userDropdown");
-      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-    });
-
-    window.addEventListener("click", (e) => {
-      if (!e.target.closest(".dropdown")) {
-        document.getElementById("userDropdown").style.display = "none";
-      }
-    });
-  </script>
-
-<script type="module" src="firebase.js"></script>
-<script type="module" src="app.js"></script>
-
+  <script type="module" src="app.js"></script>
 </body>
 </html>
+

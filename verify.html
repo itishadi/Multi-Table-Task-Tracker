@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verifiera konto</title>
+  <link rel="stylesheet" href="style.css" />
+  <link src="https://cdn.emailjs.com/dist/email.min.js"><link/>
+</head>
+<body class="register">
+  <div class="register-container">
+    <h2>🔐 Verifiera konto</h2>
+    <p>Ange den 6-siffriga koden som skickades till din e-postadress.</p>
+    <input type="text" id="verifyCode" placeholder="Verifieringskod" maxlength="6" />
+    <br><br>
+    <button onclick="verifyCode()">Verifiera</button>
+    <div id="feedback" style="margin-top: 10px; font-weight: bold;"></div>
+    <div id="verifySpinner" style="display: none; margin-top: 10px;">⏳ Verifierar...</div>
+    <p id="resendText">Fick du inget mejl? <a href="#" id="resendLink" onclick="resendCode()">Skicka koden igen</a></p>
+    <p>Har du inget konto? <a href="register.html">Skapa konto</a></p>
+  </div>
+
+ <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+</script>
+<script type="text/javascript">
+   (function(){
+      emailjs.init({
+        publicKey: "aUPmcHFyvhrqNczD9",
+      });
+   })();
+</script>
+
+  <script type="module" src="verify.js"></script>
+</body>
+</html>
+
+
